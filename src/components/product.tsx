@@ -10,7 +10,7 @@ export default function Product({ product }: { product: ProductType }) {
       className="h-96 flex flex-col group  p-6 rounded-lg hover:scale-105 transition-transform ease-out duration-200 border"
     >
       <div className="relative max-h-72 flex-1">
-        <CustomeImage product={product} fill/>
+        <CustomeImage product={product} fill />
       </div>
       <h3 className="tracking-widest text-indigo-500 text-xs font-medium title-font mt-5">
         {product.category}
