@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar";
-
+  import { ToastContainer } from "react-toastify";
 const montserrat = Montserrat({
   variable: "--font-monserrat",
   subsets: ["latin"],
@@ -28,6 +28,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${montserrat.variable} antialiased`}>
         <Navbar />
+        <ToastContainer/>
         {children}
       </body>
     </html>

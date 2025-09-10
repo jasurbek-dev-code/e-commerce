@@ -3,12 +3,11 @@
 import CustomeImage from "@/components/customImage";
 import { ProductType } from "@/interfaces";
 import { Dialog, DialogPanel } from "@headlessui/react";
-import { StarIcon } from "@heroicons/react/24/solid";
-import { StarIcon as StarIconOutline } from "@heroicons/react/24/outline";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-
+import ReactStars from "react-stars";
+import { toast } from "react-toastify";
 export default function ProductDetailPage() {
   const [loading, setLoading] = useState(false);
   const [product, setProduct] = useState<ProductType>();
@@ -26,7 +25,29 @@ export default function ProductDetailPage() {
     }
     getData();
   }, [id]);
-  console.log(product);
+
+  function handleClick() {
+    const products: ProductType[] = JSON.parse(
+      localStorage.getItem("carts") || "[]"
+    );
+    const isExistProduct = products.find((c) => c.id === product?.id);
+    if (isExistProduct) {
+      const updatedData = products.map((c) => {
+        if (c.id === product?.id) {
+          return {
+            ...c,
+            quantity: c.quantity + 1,
+          };
+        } else return c;
+      });
+      localStorage.setItem("carts", JSON.stringify(updatedData));
+    } else {
+      const data = [...products, { ...product, quantity: 1 }];
+      localStorage.setItem("carts", JSON.stringify(data));
+    }
+    toast("Product has been added to the cart")
+  }
+
   return (
     <Dialog
       open={isOpen}
@@ -57,22 +78,10 @@ export default function ProductDetailPage() {
                       <p>{product?.rating.rate}</p>
                       {product?.rating.rate && (
                         <div className="flex items-center ml-2 mr-6">
-                          {Array.from({
-                            length: Math.floor(product.rating.rate),
-                          }).map((_, i: number) => (
-                            <StarIcon
-                              key={i}
-                              className="h-4 w-4 text-yellow-500"
-                            />
-                          ))}
-                          {Array.from({
-                            length: 5 - Math.floor(product.rating.rate),
-                          }).map((_, i: number) => (
-                            <StarIconOutline
-                              key={i}
-                              className="h-4 w-4 text-yellow-500"
-                            />
-                          ))}
+                          <ReactStars
+                            value={product.rating.rate}
+                            edit={false}
+                          />
                         </div>
                       )}
                       <p className="text-blue-600 hover:underline cursor-pointer text-md">
@@ -84,7 +93,10 @@ export default function ProductDetailPage() {
                     </p>
                   </div>
                   <div className="space-y-3 text-sm">
-                    <button className="button w-full bg-blue-600 text-white border-transparent hover:border-blue-600 hover:bg-transparent hover:text-black">
+                    <button
+                      className="button w-full bg-blue-600 text-white border-transparent hover:border-blue-600 hover:bg-transparent hover:text-black"
+                      onClick={handleClick}
+                    >
                       Add to bag
                     </button>
                     <button
